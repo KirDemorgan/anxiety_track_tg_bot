@@ -18,6 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    env_file:
+      - .env
 
   bot:
     build: .
@@ -32,7 +34,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
-      - /etc/localtime:/etc/localtime:ro
+      - /etc/localtime:/etc/localtime:ro   
+    env_file:
+      - .env
 
 volumes:
   postgres_data:
