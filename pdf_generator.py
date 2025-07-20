@@ -8,32 +8,59 @@ from reportlab.pdfbase.ttfonts import TTFont
 from datetime import datetime, date
 from collections import defaultdict
 import io
+import os
 
 class PDFGenerator:
     def __init__(self):
+        try:
+            font_paths = [
+                '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',  # Ubuntu/Debian
+                '/System/Library/Fonts/Helvetica.ttc',  # macOS
+                'C:/Windows/Fonts/arial.ttf',  # Windows
+                '/usr/share/fonts/TTF/DejaVuSans.ttf',  # Arch Linux
+            ]
+            
+            font_registered = False
+            for font_path in font_paths:
+                if os.path.exists(font_path):
+                    pdfmetrics.registerFont(TTFont('DejaVuSans', font_path))
+                    font_registered = True
+                    break
+            
+            font_name = 'DejaVuSans' if font_registered else 'Helvetica'
+            
+        except Exception:
+            font_name = 'Helvetica'
+        
         self.styles = getSampleStyleSheet()
         
         self.title_style = ParagraphStyle(
             'CustomTitle',
             parent=self.styles['Heading1'],
+            fontName=font_name,
             fontSize=16,
             spaceAfter=30,
-            alignment=1
+            alignment=1, 
+            encoding='utf-8'
         )
         
         self.heading_style = ParagraphStyle(
             'CustomHeading',
             parent=self.styles['Heading2'],
+            fontName=font_name,
             fontSize=14,
             spaceAfter=12,
-            spaceBefore=20
+            spaceBefore=20,
+            encoding='utf-8'
         )
         
         self.normal_style = ParagraphStyle(
             'CustomNormal',
             parent=self.styles['Normal'],
+            fontName=font_name,
             fontSize=10,
-            spaceAfter=6
+            spaceAfter=6,
+            encoding='utf-8'
         )
     
     def generate_report(self, user_data: dict, user_id: int) -> bytes:

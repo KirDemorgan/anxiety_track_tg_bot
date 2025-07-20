@@ -6,9 +6,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${TIMEZONE:-Europe/Moscow}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - "5432:5432"
     healthcheck:
@@ -23,12 +25,14 @@ services:
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      TZ: ${TIMEZONE:-Europe/Moscow}
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
+      - /etc/localtime:/etc/localtime:ro
 
 volumes:
   postgres_data:

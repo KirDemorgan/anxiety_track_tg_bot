@@ -26,8 +26,9 @@ cp .env.example .env
 ```
 BOT_TOKEN=your_telegram_bot_token
 POSTGRES_PASSWORD=your_secure_password_here
+TIMEZONE=Europe/Moscow
 ```
-(остальные настройки БД можно оставить по умолчанию)
+(остальные настройки можно оставить по умолчанию)
 
 4. **Запустите с Docker Compose:**
 ```bash

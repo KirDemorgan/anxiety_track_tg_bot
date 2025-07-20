@@ -147,7 +147,7 @@ class PillsBot:
         )
         return ConversationHandler.END
     
-    def run(self):
+    async def run(self):
         """Запуск бота"""
         application = Application.builder().token(os.getenv('BOT_TOKEN')).build()
         
@@ -173,16 +173,30 @@ class PillsBot:
         application.add_handler(note_conv_handler)
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
         
-        application.run_polling()
+        await application.initialize()
+        await application.start()
+        await application.updater.start_polling()
+        
+        try:
+            import asyncio
+            await asyncio.Event().wait()
+        finally:
+            await application.updater.stop()
+            await application.stop()
+            await application.shutdown()
 
 async def main():
     bot = PillsBot()
     await bot.db.connect()
     
     try:
-        bot.run()
+        print("🤖 Бот запущен...")
+        await bot.run()
+    except KeyboardInterrupt:
+        print("\n🛑 Остановка бота...")
     finally:
         await bot.db.close()
+        print("✅ Бот остановлен")
 
 if __name__ == '__main__':
     import asyncio
